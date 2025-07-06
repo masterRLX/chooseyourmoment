@@ -1,0 +1,248 @@
+/* src/App.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+
+/* test.html의 <style> 태그 안의 모든 CSS 내용을 여기에 그대로 복사+붙여넣으세요 */
+/* 예시: */
+/* src/App.css */
+body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #000; overflow: hidden; perspective: 1000px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e0e0e0; cursor: default; }
+.App { text-align: center; }
+.main-container { display: flex; justify-content: center; align-items: center; gap: 600px; padding: 0 20px; box-sizing: border-box; width: 100%; max-width: 1200px; transition: transform 10.3s cubic-bezier(0.75, 0.0, 0.25, 1.0), opacity 2.3s linear; }
+.carousel-wrapper { position: relative; width: 400px; height: 400px; transform-style: preserve-3d; border-radius: 20px; transform: rotateX(-10deg); cursor: grab; }
+.carousel-container { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateY(0deg); }
+.carousel-item { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 180px; cursor: pointer; display: flex; justify-content: center; align-items: center; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; opacity: 0; backface-visibility: hidden; transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease; }
+.carousel-item.selected { opacity: 1 !important; filter: blur(0px) !important; }
+.carousel-control { background-color: transparent; color: transparent; border: none; padding: 0; font-size: 3rem; cursor: pointer; z-index: 10; border-radius: 0; transition: opacity 0.4s ease-in-out, color 0.4s ease-in-out, transform 0.2s; display: flex; justify-content: center; align-items: center; width: 80px; height: 80px; flex-shrink: 0; opacity: 0; }
+.carousel-control.visible { opacity: 1; color: rgba(255, 255, 255, 0.5); }
+.carousel-control:hover { color: rgba(255, 255, 255, 0.9); transform: scale(1.1); }
+#nextScreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; display: flex; justify-content: center; align-items: center; z-index: 9990; }
+#paintingImage { max-width: 100vw; max-height: 100vh; object-fit: contain; display: block; margin: auto; }
+#infoIcon { position: absolute; top: 20px; right: 20px; background-color: rgba(255, 255, 255, 0.075); color: #fff; border: 1px solid rgba(255, 255, 0.5); border-radius: 50%; width: 25px; height: 25px; font-size: 1rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10000; transition: background-color 0.3s ease; }
+#infoIcon:hover { background-color: rgba(255, 255, 255, 0.274); }
+#paintingInfo { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #fff; background-color: rgba(0, 0, 0, 0.5); padding: 5px 15px; border-radius: 15px; text-align: center; text-shadow: 0 0 5px rgba(0, 0, 0, 0.8); }
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 600px; /* 화살표와 캐러셀 사이 간격 더 넓게 (사용자 설정 값) */
+    padding: 0 20px; /* 화살표 근처 감지를 위한 여유 공간 (사용자 설정 값) */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    /* transform은 새로운 cubic-bezier, opacity는 linear */
+    transition: transform 10.3s cubic-bezier(0.75, 0.0, 0.25, 1.0), opacity 2.3s linear; 
+}
+
+.carousel-wrapper {
+    position: relative;
+    width: 400px; /* 캐러셀 전체 가로 폭 (이모지 크기에 맞춰 확장) */
+    height: 400px; /* 캐러셀 전체 세로 높이 */
+    transform-style: preserve-3d;
+    border-radius: 20px;
+    transform: rotateX(-10deg); /* X축 기울기 유지 */
+    cursor: grab; /* 드래그 가능한 커서 */
+}
+
+.carousel-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+    /* requestAnimationFrame으로 직접 제어하므로 transition 제거 */
+}
+
+.carousel-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    font-size: 160px; /* 이모지 크기 180px로 키움 */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none; /* 이모지 드래그 시 텍스트 선택 방지 */
+    -webkit-user-select: none; /* 웹킷 브라우저용 */
+    -moz-user-select: none; /* 모질라 브라우저용 */
+    -ms-user-select: none; /* IE 브라우저용 */
+
+    opacity: 0; /* 기본적으로 숨김 (JS에서 제어) */
+    backface-visibility: hidden;
+}
+
+/* 선택된 이모지 (가운데) 스타일 - 테두리 없음 */
+.carousel-item.selected {
+    opacity: 1 !important; /* 항상 완전히 보이게 */
+    filter: blur(0px) !important; /* 선택되면 블러 없음 */
+}
+
+/* 컨트롤 버튼 스타일 */
+.carousel-control {
+    background-color: transparent; /* 배경 투명 */
+    color: transparent; /* 기본적으로 화살표 텍스트도 투명 */
+    border: none; /* 테두리 없음 */
+    padding: 0; /* 패딩 없음 (네모 버튼 모양 제거) */
+    font-size: 3rem; /* 화살표 아이콘 크기 */
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 0; /* 원형 테두리 제거 */
+    transition: opacity 0.4s ease-in-out, color 0.4s ease-in-out, transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px; /* 화살표가 보일 때 클릭 영역 확보 */
+    height: 80px;
+    flex-shrink: 0;
+    opacity: 0; /* 기본적으로 숨김 */
+}
+
+/* 화살표 근처에 마우스 가면 나타나도록 JS에서 'visible' 클래스 추가/제거 */
+.carousel-control.visible {
+    opacity: 1; /* 나타남 */
+    color: rgba(255, 255, 255, 0.5); /* 화살표 색상 약간 밝게 */
+}
+
+.carousel-control:hover {
+    color: rgba(255, 255, 255, 0.9); /* 버튼 자체 호버 시 화살표 색상 더 진해짐 */
+    transform: scale(1.1); /* 약간 더 커지는 효과 */
+}
+.carousel-control:active {
+    transform: scale(0.9);
+}
+
+/* --- 다음 화면 (명화) 스타일 --- */
+#nextScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9990; 
+    flex-direction: column;
+    /* opacity, visibility, transition을 모두 제거하여 항상 보이도록 함 */
+}
+
+
+
+#paintingInfo {
+    color: #e0e0e0;
+    margin-top: 5px;
+    font-size: 1rem;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#paintingImage {
+    max-width: 100vw;   /* 화면 너비의 최대 90%를 넘지 않도록 합니다. (좌우 여백 확보) */
+    max-height: 100vh;  /* 화면 높이의 최대 80%를 넘지 않도록 합니다. (상하 여백 확보, 특히 그림 정보 공간 고려) */
+    object-fit: contain; /* 이미지의 가로세로 비율을 유지하면서, 지정된 최대 크기 안에 이미지가 잘리지 않고 모두 보이도록 조정합니다. */
+    display: block;    /* 이미지를 블록 요소로 만들어 여백 설정이 용이하게 합니다. */
+    margin: auto;      /* 이미지를 화면 중앙에 배치합니다.*/
+}
+
+/* 정보 아이콘 스타일 */
+#infoIcon {
+    position: absolute;
+    top: 20px; /* 상단에서 20px */
+    right: 20px; /* 오른쪽에서 20px */
+    background-color: rgba(255, 255, 255, 0.075); /* 반투명 흰색 배경 */
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 테두리 */
+    border-radius: 50%; /* 원형 */
+    width: 25px; /* 너비 */
+    height: 25px; /* 높이 */
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10000; /* 다른 요소보다 위에 오도록 */
+    transition: background-color 0.3s ease;
+}
+
+#infoIcon:hover {
+    background-color: rgba(255, 255, 255, 0.274); /* 호버 시 배경색 변경 */
+}
+.main-title {
+    position: absolute; /* 절대 위치 사용 */
+    top: 25vh; /* 화면 상단에서 5% 아래에 위치 */
+    left: 50%; /* 왼쪽에서 50% 지점 */
+    transform: translateX(-50%); /* X축으로 자신의 너비의 50%만큼 왼쪽으로 이동하여 완벽한 중앙 정렬 */
+    font-family: 'Josefin Sans', serif;
+    color: rgba(255, 255, 255, 0.8); /* 너무 밝지 않은 흰색 */
+    font-size: 1.5rem; /* 글자 크기 */
+    font-weight: 300; /* 얇은 글씨체로 우아한 느낌 */
+    letter-spacing: 3px; /* 글자 간격 */
+    text-transform: capitalize; /* 모든 글자를 대문자로 */
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* 은은한 네온 효과 */
+
+    z-index: 100; /* 캐러셀보다 위에 보이도록 설정 */
+    pointer-events: none; /* 제목이 마우스 클릭 등 이벤트를 방해하지 않도록 설정 */
+}
+/* ✨ 불필요한 그림 정보 오버레이 관련 CSS를 제거합니다. */
+/* #paintingInfoOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 10001;
+    overflow-y: auto;
+    text-align: center;
+}
+
+#paintingInfoOverlay h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+#paintingInfoOverlay p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+#paintingInfoOverlay a {
+    color: #ADD8E6;
+    text-decoration: underline;
+}
+
+#closeInfoOverlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#closeInfoOverlay:hover {
+    background-color: #fff;
+    color: #000;
+}
+*/
