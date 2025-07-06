@@ -1,4 +1,5 @@
 // ✅ 님 원래 코드 (절대 손대지 않음)
+
 import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
@@ -9,6 +10,10 @@ const PORT = 8080;
 
 app.use(cors());
 app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Welcome to the API!');
+});
 
 const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
 const BATCH_SIZE = 5;
