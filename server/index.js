@@ -1,4 +1,7 @@
 // ✅ 님 원래 코드 (절대 손대지 않음)
+app.get('/', (req, res) => {
+  res.send('OK');
+});
 
 import express from 'express';
 import axios from 'axios';
