@@ -1,7 +1,4 @@
 // ✅ 님 원래 코드 (절대 손대지 않음)
-app.get('/', (req, res) => {
-  res.send('OK');
-});
 
 import express from 'express';
 import axios from 'axios';
@@ -17,6 +14,12 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Welcome to the API!');
 });
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
 
 const MET_API_BASE_URL = 'https://collectionapi.metmuseum.org/public/collection/v1';
 const BATCH_SIZE = 5;
